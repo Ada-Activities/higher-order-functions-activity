@@ -11,7 +11,58 @@ WORDS = ["jumps", "laziest", "brown", "a", "quick", "fox", "the", "dog", "over"]
 # parameter on it. This will be very similar to the min_function_custom
 # developed in the Learn reading.
 def my_max(collection, key):
-    pass
+    if not collection:
+        raise ValueError("cannot find max in empty list")
+
+    # This approach works for list-like collections (collections that
+    # support [] indexing and that we can ask the length of). This
+    # would NOT work if we tried iterating over the keys in a
+    # dictionary since we cannot use [] indexing on the keys,
+    # values, or items iterators.
+
+    # assume the first value in the list will be the max
+    max_item = collection[0]
+    max_value = key(max_item)
+
+    # iterate through the remaining values
+    for i in range(1, len(collection)):
+        item = collection[i]
+        current_value = key(item)
+
+        # if the current value beats the best one, replace the best
+        if current_value > max_value:
+            max_value = current_value
+            max_item = item
+
+    return max_item
+
+# An alternative approach (not called in the functions below, so
+# rename this to my_max if you'd like to confirm that it works),
+# that makes fewer assumptions about the collection of data being
+# passed in (avoids [] indexing and asking for the length).
+def my_max_iterable(iterable, key):
+    if not iterable:
+        raise ValueError("cannot find max in empty list")
+
+    # this variation works for any iterable type, including lists,
+    # tuples, any of the dict iterators, or sets, since the only thing
+    # this code tries to do to the passed in data is iterate over it.
+
+    # initialize the max to a value indicating we haven't picked it yet
+    max_item = None
+    max_value = None
+
+    # iterate over the inputs
+    for item in iterable:
+        current_value = key(item)
+
+        # if we haven't yet picked a max, or the current value beats
+        # the best so far, replace the max
+        if max_item is None or current_value > max_value:
+            max_value = current_value
+            max_item = item
+
+    return max_item
 
 # Implement a custom version of filter, called my_filter
 # my_filter takes a function (should_keep) which it will call on every item in
@@ -22,7 +73,15 @@ def my_max(collection, key):
 def my_filter(should_keep, collection):
     # if you've encountered list comprehensions, this would be a
     # great place to use one
-    pass
+    result = []
+    for item in collection:
+        if should_keep(item):
+            result.append(item)
+
+    # list comprehension approach
+    # result = [item for item in collection if should_keep(item)]
+
+    return result
 
 # Implement a custom version of map, called my_map
 # my_map takes a function (transform) which it will call on every item in the
@@ -33,7 +92,15 @@ def my_filter(should_keep, collection):
 def my_map(transform, collection):
     # if you've encountered list comprehensions, this would be a
     # great place to use one
-    pass
+    result = []
+    for item in collection:
+        transformed_item = transform(item)
+        result.append(transformed_item)
+
+    # list comprehension approach
+    # result = [transform(item) for item in collection]
+
+    return result
 
 #################################################
 # NO CODE BELOW THIS POINT NEEDS TO BE MODIFIED #
